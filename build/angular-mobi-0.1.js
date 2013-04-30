@@ -5,16 +5,16 @@ angular.module('mobi.pinch', ['mobi.config']);
 angular.module('mobi.rotate', ['mobi.config']);
 angular.module('mobi', ['mobi.events', 'mobi.swipe', 'mobi.pinch', 'mobi.rotate']);
 
-/**
- * Loops thru the various passed directive names and assigns to `QuoJs` touch event
- */
-angular.forEach('mobiHold:hold mobiTap:tap mobiSingletap:singleTap mobiDoubletap:doubleTap'.split(' '), function(name) {
+// Capitalize a String
+var capitalize = function(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
 
-	var directive = name.split(':')
-		, directiveName = directive[0]
-		, eventName = directive[1];
+// Create a new Directive in the specified module
+var createDirective = function (moduleName, eventName) {
 
-	angular.module('mobi.events')
+	var directiveName = "mobi" + capitalize(eventName.toLowerCase());
+	angular.module(moduleName)
 		.directive(directiveName, ['$parse', function($parse) {
 			return function(scope, elm, attr) {
 				var fn = $parse(attr[directiveName]);
@@ -25,70 +25,32 @@ angular.forEach('mobiHold:hold mobiTap:tap mobiSingletap:singleTap mobiDoubletap
 				});
 			};
 		}]);
+};
+
+/**
+ * Loops thru the various passed directive names and assigns to `QuoJs` touch event
+ */
+angular.forEach('hold tap singleTap doubleTap'.split(' '), function(eventName) {
+	createDirective ("mobi.events", eventName);
 });
 
 /**
  * Loops thru the various passed directive names and assigns to `QuoJs` swipe gesture
  */
-angular.forEach('mobiSwipe:swipe mobiSwiping:swiping mobiSwipeleft:swipeLeft mobiSwiperight:swipeRight mobiSwipedown:swipeDown mobiSwipeup:swipeUp'.split(' '), function(name) {
-
-	var directive = name.split(':')
-		, directiveName = directive[0]
-		, eventName = directive[1];
-
-	angular.module('mobi.swipe')
-		.directive(directiveName, ['$parse', function($parse) {
-			return function(scope, elm, attr) {
-				var fn = $parse(attr[directiveName]);
-				$$(elm[0]).bind(eventName, function(event) {
-					scope.$apply(function() {
-						fn(scope, {$event: event});
-					});
-				});
-			};
-		}]);
+angular.forEach('swipe swiping swipeLeft swipeRight swipeDown swipeUp'.split(' '), function(eventName) {
+	createDirective ("mobi.swipe", eventName);
 });
 
 /**
  * Loops thru the various passed directive names and assigns to `QuoJs` pinch gesture
  */
-angular.forEach('mobiPinch:pinch mobiPinching:pinching mobiPinchin:pinchIn mobiPinchout:pinchOut'.split(' '), function(name) {
-
-	var directive = name.split(':')
-		, directiveName = directive[0]
-		, eventName = directive[1];
-
-	angular.module('mobi.pinch')
-		.directive(directiveName, ['$parse', function($parse) {
-			return function(scope, elm, attr) {
-				var fn = $parse(attr[directiveName]);
-				$$(elm[0]).bind(eventName, function(event) {
-					scope.$apply(function() {
-						fn(scope, {$event: event});
-					});
-				});
-			};
-		}]);
+angular.forEach('pinch pinching pinchIn pinchOut'.split(' '), function(eventName) {
+	createDirective ("mobi.pinch", eventName);
 });
 
 /**
  * Loops thru the various passed directive names and assigns to `QuoJs` rotate gesture
  */
-angular.forEach('mobiRotate:rotate mobiRotating:rotating mobiRotateleft:rotateLeft mobiRotateright:rotateRight'.split(' '), function(name) {
-
-	var directive = name.split(':')
-		, directiveName = directive[0]
-		, eventName = directive[1];
-
-	angular.module('mobi.rotate')
-		.directive(directiveName, ['$parse', function($parse) {
-			return function(scope, elm, attr) {
-				var fn = $parse(attr[directiveName]);
-				$$(elm[0]).bind(eventName, function(event) {
-					scope.$apply(function() {
-						fn(scope, {$event: event});
-					});
-				});
-			};
-		}]);
+angular.forEach('rotate rotating rotateLeft rotateRight'.split(' '), function(eventName) {
+	createDirective ("mobi.rotate", eventName);
 });
